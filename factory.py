@@ -60,7 +60,7 @@ class ModelFactory(object):
     def createSimpleCNNModel(self):
         model = Base_Model([
             Input(shape=(28, 28, 1)),
-
+            UpSampling3D(size=(1, 1, 1)),
             Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)),
             MaxPooling2D((2, 2)),
             Flatten(),
@@ -74,7 +74,7 @@ class ModelFactory(object):
     def createCNNModel(self):
         model = Base_Model([
             Input(shape=(28, 28, 1)),
-
+            UpSampling3D(size=(1, 1, 1)),
             Conv2D(48, (5, 5), activation='relu', padding="same", input_shape=(28, 28, 1)),
             MaxPooling2D((2, 2), padding="same"),
             Conv2D(96, (5, 5), activation='relu', padding="same"),
@@ -93,6 +93,7 @@ class ModelFactory(object):
     def createMiniVGGModel(self):
         model = Base_Model([
             Input(shape=(28, 28, 1)),
+            UpSampling3D(size=(1, 1, 1)),
 
             Conv2D(64, (3, 3), activation='relu',padding="same", input_shape=(28, 28, 1)),
             BatchNormalization(axis=1),
