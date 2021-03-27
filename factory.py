@@ -4,7 +4,7 @@ from tensorflow.keras.regularizers import l2
 from tensorflow.keras.models import Sequential as Base_Model
 import numpy as np
 from sklearn.model_selection import train_test_split
-
+from dropblock import DropBlock2D
 
 class Singleton:
     """
@@ -191,6 +191,7 @@ class ModelFactory(object):
                 #Adding back residual mapping
                 x = add([x, y])
                 x = Activation('relu')(x)
+                x = DropBlock2D(keep_prob=0.8, block_size=1)(x)
 
             num_filters = 2 * num_filters
 
