@@ -19,7 +19,7 @@ class Loader:
         return (x_train, y_train), (x_test, y_test)
 
 
-    def load_dataset_expanddim(self):
+    def load_dataset_expanddim(self, random_state = 42):
         (x_train, y_train), (x_test, y_test) = dataset.load_data()
 
         # Expand dimensions of datasets
@@ -38,4 +38,6 @@ class Loader:
         print("Shape of original training result:", np.shape(y_train_1))
         print("Shape of original test result:", np.shape(y_test_1))
 
-        return (x_train_1, y_train_1) , (x_test_1, y_test_1)
+        x_val, x_test, y_val, y_test = train_test_split(x_test_1, y_test_1, test_size = 0.5, random_state = random_state)
+
+        return (x_train_1, y_train_1) , (x_val, y_val), (x_test, y_test)
