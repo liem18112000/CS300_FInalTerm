@@ -199,7 +199,7 @@ class ModelFactory(object):
         output = Dense(10, name='model_output', activation='softmax',
                     kernel_initializer='he_uniform')(b5_avg_p)
 
-        model = Model(input, output)
+        model = Base_Model([input, output])
 
         model.summary()
         return model
