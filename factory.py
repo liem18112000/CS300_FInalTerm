@@ -180,26 +180,12 @@ class ModelFactory(object):
             epsilon=1e-3, momentum=0.999, name='b3_out')(b3_relu_2)  # size: 3*3
 
         '''block 4'''
-        b4_cnv2d_1 = Conv2D(filters=128, kernel_size=(1, 1), strides=(1, 1), padding='same',
-                            use_bias=False, name='b4_cnv2d_1', kernel_initializer='normal')(b3_out)
-        b4_relu_1 = ReLU(name='b4_relu_1')(b4_cnv2d_1)
-        b4_bn_1 = BatchNormalization(
-            epsilon=1e-3, momentum=0.999, name='b4_bn_1')(b4_relu_1)  # size: 3*3
-
-        b4_add = add([b3_out, b4_bn_1])  #
-
-        b4_cnv2d_2 = Conv2D(filters=256, kernel_size=(3, 3), strides=(2, 2), padding='same',
-                            use_bias=False, name='b4_cnv2d_2', kernel_initializer='normal')(b4_add)
-        b4_relu_2 = ReLU(name='b4_relu_2')(b4_cnv2d_2)
-        b4_out = BatchNormalization(
-            epsilon=1e-3, momentum=0.999, name='b4_out')(b4_relu_2)  # size: 1*1
-
-        '''block 5'''
-        b5_avg_p = GlobalAveragePooling2D()(b4_out)
-        output = Dense(10, name='model_output', activation='softmax',
-                    kernel_initializer='he_uniform')(b5_avg_p)
+        b4_avg_p = GlobalAveragePooling2D()(b3_out)
+        output = Dense(10, name='model_output', activation='softmax', kernel_initializer='he_uniform')(b4_avg_p)
 
         model = tf.keras.Model(input, output)
 
         model.summary()
         return model
+
+
