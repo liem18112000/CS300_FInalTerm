@@ -195,7 +195,7 @@ class ModelFactory(object):
             num_filters = 2 * num_filters
 
         # Add classifier on top.
-        x = AveragePooling2D()(x)
+        x = AveragePooling2D((2, 2), padding="same")(x)
         y = Flatten()(x)
         outputs = Dense(10,activation='softmax', kernel_initializer='he_normal')(y)
 
