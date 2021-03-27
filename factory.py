@@ -4,7 +4,6 @@ from tensorflow.keras.regularizers import l2
 from tensorflow.keras.models import Sequential as Base_Model
 import numpy as np
 from sklearn.model_selection import train_test_split
-from dropblock import DropBlock2D
 
 class Singleton:
     """
