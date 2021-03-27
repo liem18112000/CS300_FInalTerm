@@ -32,7 +32,7 @@ class Loader:
         y_train_1, y_test_1 = tf.keras.utils.to_categorical(
             y_train, 10, dtype=np.uint8), tf.keras.utils.to_categorical(y_test, 10, dtype=np.uint8)
 
-        x_val, x_test, y_val, y_test = train_test_split(x_test_1, y_test_1, test_size = 0.5, random_state = random_state)
+        x_val, x_test, y_val, y_test = train_test_split(x_test_1, y_test_1, test_size = 0.2, random_state = random_state)
 
         print("Shape of original training examples:", np.shape(x_train_1))
         print("Shape of original validation examples:", np.shape(x_val))
