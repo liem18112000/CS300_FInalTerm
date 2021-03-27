@@ -133,57 +133,65 @@ class ModelFactory(object):
         model.summary()
         return model
 
-    def createMiniResNetModel(self):
-        input = Input(shape=(28, 28, 1))
+    def createMiniResNetModel(self, num_filters=64, num_blocks=4, num_sub_blocks=2,use_max_pool=False):
 
-        '''block_1'''
-        b1_cnv2d_1 = Conv2D(filters=16, kernel_size=(3, 3), strides=(2, 2), padding='same',
-                            use_bias=False, name='b1_cnv2d_1', kernel_initializer='normal')(input)
-        b1_relu_1 = ReLU(name='b1_relu_1')(b1_cnv2d_1)
-        b1_bn_1 = BatchNormalization(
-            epsilon=1e-3, momentum=0.999, name='b1_bn_1')(b1_relu_1)  # size: 14*14
+        # Creating model based on ResNet published archietecture
+        inputs = Input(shape=(28, 28, 1))
+        x = Conv2D(num_filters, padding='same',
+                kernel_initializer='he_normal',
+                kernel_size=7, strides=2,
+                kernel_regularizer=l2(1e-4))(inputs)
+        x = BatchNormalization()(x)
+        x = Activation('relu')(x)
 
-        b1_cnv2d_2 = Conv2D(filters=32, kernel_size=(1, 1), strides=(2, 2), padding='same',
-                            use_bias=False, name='b1_cnv2d_2', kernel_initializer='normal')(b1_bn_1)
-        b1_relu_2 = ReLU(name='b1_relu_2')(b1_cnv2d_2)
-        b1_out = BatchNormalization(
-            epsilon=1e-3, momentum=0.999, name='b1_out')(b1_relu_2)  # size: 14*14
+        #Check by applying max pooling later (setting it false as size of image is small i.e. 28x28)
+        if use_max_pool:
+            x = MaxPooling2D(pool_size=3, padding='same', strides=2)(x)
+            num_blocks = 3
 
-        '''block 2'''
-        b2_cnv2d_1 = Conv2D(filters=32, kernel_size=(1, 1), strides=(1, 1), padding='same',
-                            use_bias=False, name='b2_cnv2d_1', kernel_initializer='normal')(b1_out)
-        b2_relu_1 = ReLU(name='b2_relu_1')(b2_cnv2d_1)
-        b2_bn_1 = BatchNormalization(
-            epsilon=1e-3, momentum=0.999, name='b2_bn_1')(b2_relu_1)  # size: 14*14
+        # Creating Conv base stack
+        # Instantiate convolutional base (stack of blocks).
+        for i in range(num_blocks):
+            for j in range(num_sub_blocks):
+                strides = 1
+                is_first_layer_but_not_first_block = j == 0 and i > 0
+                if is_first_layer_but_not_first_block:
+                    strides = 2
+                #Creating residual mapping using y
+                y = Conv2D(num_filters,
+                        kernel_size=3,
+                        padding='same',
+                        strides=strides,
+                        kernel_initializer='he_normal',
+                        kernel_regularizer=l2(1e-4))(x)
+                y = BatchNormalization()(y)
+                y = Activation('relu')(y)
+                y = Conv2D(num_filters,
+                        kernel_size=3,
+                        padding='same',
+                        kernel_initializer='he_normal',
+                        kernel_regularizer=l2(1e-4))(y)
+                y = BatchNormalization()(y)
+                if is_first_layer_but_not_first_block:
+                    x = Conv2D(num_filters,
+                            kernel_size=1,
+                            padding='same',
+                            strides=2,
+                            kernel_initializer='he_normal',
+                            kernel_regularizer=l2(1e-4))(x)
+                #Adding back residual mapping
+                x = add([x, y])
+                x = Activation('relu')(x)
 
-        b2_add = add([b1_out, b2_bn_1])  #
+            num_filters = 2 * num_filters
 
-        b2_cnv2d_2 = Conv2D(filters=64, kernel_size=(3, 3), strides=(2, 2), padding='same',
-                            use_bias=False, name='b2_cnv2d_2', kernel_initializer='normal')(b2_add)
-        b2_relu_2 = ReLU(name='b2_relu_2')(b2_cnv2d_2)
-        b2_out = BatchNormalization(
-            epsilon=1e-3, momentum=0.999, name='b2_bn_2')(b2_relu_2)  # size: 7*7
+        # Add classifier on top.
+        x = AveragePooling2D()(x)
+        y = Flatten()(x)
+        outputs = Dense(10,activation='softmax', kernel_initializer='he_normal')(y)
 
-        '''block 3'''
-        b3_cnv2d_1 = Conv2D(filters=64, kernel_size=(1, 1), strides=(1, 1), padding='same',
-                            use_bias=False, name='b3_cnv2d_1', kernel_initializer='normal')(b2_out)
-        b3_relu_1 = ReLU(name='b3_relu_1')(b3_cnv2d_1)
-        b3_bn_1 = BatchNormalization(
-            epsilon=1e-3, momentum=0.999, name='b3_bn_1')(b3_relu_1)  # size: 7*7
-
-        b3_add = add([b2_out, b3_bn_1])  #
-
-        b3_cnv2d_2 = Conv2D(filters=128, kernel_size=(3, 3), strides=(2, 2), padding='same',
-                            use_bias=False, name='b3_cnv2d_2', kernel_initializer='normal')(b3_add)
-        b3_relu_2 = ReLU(name='b3_relu_2')(b3_cnv2d_2)
-        b3_out = BatchNormalization(
-            epsilon=1e-3, momentum=0.999, name='b3_out')(b3_relu_2)  # size: 3*3
-
-        '''block 4'''
-        b4_avg_p = GlobalAveragePooling2D()(b3_out)
-        output = Dense(10, name='model_output', activation='softmax', kernel_initializer='he_uniform')(b4_avg_p)
-
-        model = tf.keras.Model(input, output)
+        # Instantiate model.
+        model = tf.keras.Model(inputs=inputs, outputs=outputs)
 
         model.summary()
         return model
