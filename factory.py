@@ -1,5 +1,6 @@
 import tensorflow as tf
 from tensorflow.keras.layers import *
+from tf.keras.regularizers import l2
 from tensorflow.keras.models import Sequential as Base_Model
 import numpy as np
 from sklearn.model_selection import train_test_split
