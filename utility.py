@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 import numpy as np
-import matplotlib.pyplot as pl
+import matplotlib.pyplot as plt
 
 def visualize_history(history):
     # summarize history for accuracy
