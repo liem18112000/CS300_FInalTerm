@@ -91,6 +91,31 @@ class ModelFactory(object):
         model.summary()
         return model
 
+    def createPretrainModel(self, Pretrain_Model, fcn, reszie_rate=2):
+        layers = [
+            Input(shape=(28, 28, 1)),
+            UpSampling3D(size=(reszie_rate, reszie_rate, 3)),
+            Pretrain_Model(
+                include_top=False, weights='imagenet', input_shape=(28 * reszie_rate, 28 * reszie_rate, 3)
+            ),
+            Dropout(0.5),
+            Flatten()
+        ] 
+
+
+        num_fcn, nodes = fcn
+        for i in range(num_fcn):
+            layers.append(Dense(nodes, activation='relu'))
+
+        layers += [
+            Dense(10, activation='softmax')
+        ]
+
+        model = Base_Model(layers)
+
+        model.summary()
+        return model
+
 
     def createMiniVGGModel(self):
         model = Base_Model([
