@@ -94,7 +94,10 @@ class ModelFactory(object):
     def createPretrainModel(self, pretrain,  fcn, trainable = False, reszie_rate=2):
 
         pretrain_model, pretrain_input = pretrain
-        
+
+        i = tf.keras.layers.Input((28 * reszie_rate, 28 * reszie_rate, 3), dtype=tf.uint8)
+        x = tf.cast(i, tf.float32)
+        x = pretrain_input(x)
         core = pretrain_model(
             include_top=False, weights='imagenet', input_shape=(28 * reszie_rate, 28 * reszie_rate, 3)
         )
@@ -102,11 +105,13 @@ class ModelFactory(object):
         for layer in core.layers:
             layer.trainable = trainable
 
+        x = core(x)
+        
         layers = [
             Input(shape=(28, 28, 1)),
             UpSampling3D(size=(reszie_rate, reszie_rate, 3)),
             pretrain_input,
-            core,
+            x,
             Dropout(0.5),
             Flatten()
         ] 
