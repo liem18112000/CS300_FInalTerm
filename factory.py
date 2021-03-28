@@ -52,7 +52,7 @@ class ModelFactory(object):
     def createPlainModel(self):
         model = Base_Model([
             Flatten(input_shape=(28, 28)),
-            Dense(512, activation='relu'),
+            Dense(filter * 8, activation='relu'),
             Dense(10, activation='softmax')
         ])
 
@@ -66,7 +66,7 @@ class ModelFactory(object):
             Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)),
             MaxPooling2D((2, 2)),
             Flatten(),
-            Dense(512, activation='relu'),
+            Dense(filter * 8, activation='relu'),
             Dense(10, activation='softmax')
         ])
 
@@ -84,7 +84,7 @@ class ModelFactory(object):
             Conv2D(80, (5, 5), activation='relu', padding="same"),
             Conv2D(96, (5, 5), activation='relu', padding="same"),
             Flatten(),
-            Dense(512, activation='relu'),
+            Dense(filter * 8, activation='relu'),
             Dense(10, activation='softmax')
         ])
 
@@ -115,53 +115,50 @@ class ModelFactory(object):
         return model
 
 
-    def createMiniVGGModel(self):
+    def createMiniVGGModel(self, filter = 128):
         model = Base_Model([
             Input(shape=(28, 28, 1)),
-            UpSampling3D(size=(1, 1, 1)),
-
-            Conv2D(64, (3, 3), activation='relu',padding="same", input_shape=(28, 28, 1)),
+            Conv2D(filter, (3, 3), activation='relu',padding="same", input_shape=(28, 28, 1)),
             BatchNormalization(axis=1),
-            Conv2D(64, (3, 3), activation='relu', padding="same"),
+            Conv2D(filter, (3, 3), activation='relu', padding="same"),
             BatchNormalization(axis=1),
             MaxPooling2D((2, 2)),
-            Dropout(0.25),
+            Dropout(0.5),
 
-            Conv2D(128, (3, 3), activation='relu', padding="same"),
+            Conv2D(filter * 2, (3, 3), activation='relu', padding="same"),
             BatchNormalization(axis=1),
-            Conv2D(128, (3, 3), activation='relu', padding="same"),
+            Conv2D(filter * 2, (3, 3), activation='relu', padding="same"),
             BatchNormalization(axis=1),
             MaxPooling2D((2, 2)),
-            Dropout(0.25),
+            Dropout(0.5),
 
-            Conv2D(256, (3, 3), activation='relu', padding="same"),
+            Conv2D(filter * 4, (3, 3), activation='relu', padding="same"),
             BatchNormalization(axis=1),
-            Conv2D(256, (3, 3), activation='relu', padding="same"),         
+            Conv2D(filter * 4, (3, 3), activation='relu', padding="same"),         
             BatchNormalization(axis=1),
-            Conv2D(256, (3, 3), activation='relu', padding="same"),
+            Conv2D(filter * 4, (3, 3), activation='relu', padding="same"),
             BatchNormalization(axis=1),
-            Conv2D(256, (3, 3), activation='relu', padding="same"),
+            Conv2D(filter * 4, (3, 3), activation='relu', padding="same"),
             BatchNormalization(axis=1),
             MaxPooling2D((2, 2)),
-            Dropout(0.25),
+            Dropout(0.5),
 
-            Conv2D(512, (3, 3), activation='relu', padding="same"),
+            Conv2D(filter * 8, (3, 3), activation='relu', padding="same"),
             BatchNormalization(axis=1),
-            Conv2D(512, (3, 3), activation='relu', padding="same"),
+            Conv2D(filter * 8, (3, 3), activation='relu', padding="same"),
             BatchNormalization(axis=1),
-            Conv2D(512, (3, 3), activation='relu', padding="same"),
+            Conv2D(filter * 8, (3, 3), activation='relu', padding="same"),
             BatchNormalization(axis=1),
-            Conv2D(512, (3, 3), activation='relu', padding="same"),
+            Conv2D(filter * 8, (3, 3), activation='relu', padding="same"),
             BatchNormalization(axis=1),
             MaxPooling2D((2, 2)),
-            Dropout(0.25),
+            Dropout(0.5),
 
             Flatten(),
-            Dense(512, activation='relu'),
+            Dense(filter * 8, activation='relu'),
             BatchNormalization(axis=1),
-            Dense(512, activation='relu'),
+            Dense(filter * 8, activation='relu'),
             BatchNormalization(axis=1),
-            Dropout(0.25),
 
             Dense(10, activation='softmax')
         ])
