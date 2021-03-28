@@ -91,7 +91,7 @@ class ModelFactory(object):
         model.summary()
         return model
 
-    def createPretrainModel(self, pretrain,  fcn, trainable = False, reszie_rate=2):
+    def createPretrainModel(self, pretrain, trainable = False, reszie_rate=2):
 
         pretrain_model, pretrain_input = pretrain
 
@@ -99,7 +99,7 @@ class ModelFactory(object):
         x = tf.cast(i, tf.float32)
         x = pretrain_input(x)
         core = pretrain_model(
-            include_top=False, weights='imagenet', input_shape=(28 * reszie_rate, 28 * reszie_rate, 3)
+            include_top=False, weights='imagenet'
         )
 
         for layer in core.layers:
@@ -107,25 +107,17 @@ class ModelFactory(object):
 
         x = core(x)
         
-        layers = [
+        model = Base_Model([
             Input(shape=(28, 28, 1)),
             UpSampling3D(size=(reszie_rate, reszie_rate, 3)),
             pretrain_input,
             x,
             Dropout(0.5),
-            Flatten()
-        ] 
-
-
-        num_fcn, nodes = fcn
-        for i in range(num_fcn):
-            layers.append(Dense(nodes, activation='relu'))
-
-        layers += [
-            Dense(10, activation='softmax')
-        ]
-
-        model = Base_Model(layers)
+            Flatten(),
+            Dense(4096, activation='relu'),
+            Dense(4096, activation='relu'),
+            Dense(10, activation='softmax'),
+        ])
 
         model.summary()
         return model
