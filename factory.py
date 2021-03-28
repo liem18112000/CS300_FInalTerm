@@ -115,7 +115,7 @@ class ModelFactory(object):
         return model
 
 
-    def createMiniVGGModel(self, filter = 128):
+    def createMiniVGGModel(self, filter = 64):
         model = Base_Model([
             Input(shape=(28, 28, 1)),
             UpSampling3D(size=(1, 1, 1)),
@@ -124,14 +124,14 @@ class ModelFactory(object):
             Conv2D(filter, (3, 3), activation='relu', padding="same"),
             BatchNormalization(axis=1),
             MaxPooling2D((2, 2)),
-            Dropout(0.5),
+            Dropout(0.25),
 
             Conv2D(filter * 2, (3, 3), activation='relu', padding="same"),
             BatchNormalization(axis=1),
             Conv2D(filter * 2, (3, 3), activation='relu', padding="same"),
             BatchNormalization(axis=1),
             MaxPooling2D((2, 2)),
-            Dropout(0.5),
+            Dropout(0.25),
 
             Conv2D(filter * 4, (3, 3), activation='relu', padding="same"),
             BatchNormalization(axis=1),
@@ -142,7 +142,7 @@ class ModelFactory(object):
             Conv2D(filter * 4, (3, 3), activation='relu', padding="same"),
             BatchNormalization(axis=1),
             MaxPooling2D((2, 2)),
-            Dropout(0.5),
+            Dropout(0.25),
 
             Conv2D(filter * 8, (3, 3), activation='relu', padding="same"),
             BatchNormalization(axis=1),
@@ -153,7 +153,7 @@ class ModelFactory(object):
             Conv2D(filter * 8, (3, 3), activation='relu', padding="same"),
             BatchNormalization(axis=1),
             MaxPooling2D((2, 2)),
-            Dropout(0.5),
+            Dropout(0.25),
 
             Flatten(),
             Dense(filter * 8, activation='relu'),
