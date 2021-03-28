@@ -91,7 +91,11 @@ class ModelFactory(object):
         model.summary()
         return model
 
-    def createPretrainModel(self, Pretrain_Model, fcn, reszie_rate=2):
+    def createPretrainModel(self, Pretrain_Model, fcn, trainable = False, reszie_rate=2):
+
+        for layer in Pretrain_Model.layers:
+            layer.trainable = trainable
+
         layers = [
             Input(shape=(28, 28, 1)),
             UpSampling3D(size=(reszie_rate, reszie_rate, 3)),
