@@ -143,7 +143,7 @@ class ModelFactory(object):
         model.summary()
         return model
 
-    def createMiniResNetModel(self, num_filters=64, num_blocks=4, num_sub_blocks=2,use_max_pool=False):
+    def createMiniResNetModel(self, num_filters=64, num_blocks=4, num_sub_blocks=2,use_max_pool=False, use_dropout = False):
 
         # Creating model based on ResNet published archietecture
         inputs = Input(shape=(28, 28, 1))
@@ -192,6 +192,10 @@ class ModelFactory(object):
                 #Adding back residual mapping
                 x = add([x, y])
                 x = Activation('relu')(x)
+
+                # Add Dropout
+                if use_dropout:
+                    x = Dropout(0.25)(x)
 
             num_filters = 2 * num_filters
 
