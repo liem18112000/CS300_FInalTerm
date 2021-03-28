@@ -110,7 +110,6 @@ class ModelFactory(object):
         model = Base_Model([
             Input(shape=(28, 28, 1)),
             UpSampling3D(size=(reszie_rate, reszie_rate, 3)),
-            pretrain_input,
             x,
             Dropout(0.5),
             Flatten(),
