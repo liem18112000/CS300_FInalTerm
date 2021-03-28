@@ -118,6 +118,7 @@ class ModelFactory(object):
     def createMiniVGGModel(self, filter = 128):
         model = Base_Model([
             Input(shape=(28, 28, 1)),
+            UpSampling3D(size=(1, 1, 1)),
             Conv2D(filter, (3, 3), activation='relu',padding="same", input_shape=(28, 28, 1)),
             BatchNormalization(axis=1),
             Conv2D(filter, (3, 3), activation='relu', padding="same"),
