@@ -92,16 +92,18 @@ class ModelFactory(object):
         return model
 
     def createPretrainModel(self, Pretrain_Model, fcn, trainable = False, reszie_rate=2):
+        
+        pretrain_model = Pretrain_Model(
+            include_top=False, weights='imagenet', input_shape=(28 * reszie_rate, 28 * reszie_rate, 3)
+        )
 
-        for layer in Pretrain_Model.layers:
+        for layer in pretrain_model.layers:
             layer.trainable = trainable
 
         layers = [
             Input(shape=(28, 28, 1)),
             UpSampling3D(size=(reszie_rate, reszie_rate, 3)),
-            Pretrain_Model(
-                include_top=False, weights='imagenet', input_shape=(28 * reszie_rate, 28 * reszie_rate, 3)
-            ),
+            pretrain_model,
             Dropout(0.5),
             Flatten()
         ] 
