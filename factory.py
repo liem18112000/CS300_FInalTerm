@@ -99,18 +99,16 @@ class ModelFactory(object):
         x = tf.cast(i, tf.float32)
         x = pretrain_input(x)
         core = pretrain_model(
-            include_top=False, weights='imagenet'
+            include_top=False, weights='imagenet', input_tensor=x
         )
 
         for layer in core.layers:
             layer.trainable = trainable
-
-        x = core(x)
         
         model = Base_Model([
             Input(shape=(28, 28, 1)),
             UpSampling3D(size=(reszie_rate, reszie_rate, 3)),
-            x,
+            core,
             Dropout(0.5),
             Flatten(),
             Dense(4096, activation='relu'),
