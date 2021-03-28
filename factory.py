@@ -99,7 +99,7 @@ class ModelFactory(object):
             include_top=False, weights='imagenet', input_shape=(28 * reszie_rate, 28 * reszie_rate, 3)
         )
 
-        for layer in pretrain_model.layers:
+        for layer in core.layers:
             layer.trainable = trainable
 
         layers = [
