@@ -233,7 +233,7 @@ class ModelFactory(object):
         model.summary()
         return model
 
-    def createSVMModel(self, kernel = 'rbf', C = 1.0, max_iter = 10000):
-        model = svm.SVC(C=C, kernel=kernel, max_iter=max_iter, tol = 0.01)
-
+    def createSVMModel(self, kernel = 'rbf', C = 1.0, max_iter = 10000, degree = 3):
+        model = svm.SVC(C=C, kernel=kernel, max_iter=max_iter, tol = 0.01, degree=degree)
+        return model
 
