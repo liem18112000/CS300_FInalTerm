@@ -5,7 +5,7 @@ from tensorflow.keras.regularizers import l2
 from tensorflow.keras.models import Sequential as Base_Model
 import numpy as np
 from sklearn.model_selection import train_test_split
-
+from sklearn import svm, metrics
 
 class Singleton:
     """
@@ -113,7 +113,6 @@ class ModelFactory(object):
 
         model.summary()
         return model
-
 
     def createMiniVGGModel(self, filter = 64):
         model = Base_Model([
@@ -233,5 +232,8 @@ class ModelFactory(object):
 
         model.summary()
         return model
+
+    def createSVMModel(self, kernel = 'rbf', C = 1.0, max_iter = 10000):
+        model = svm.SVC(C=C, kernel=kernel, max_iter=max_iter, tol = 0.01)
 
 
